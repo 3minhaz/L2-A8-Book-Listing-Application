@@ -7,3 +7,8 @@ export type ICreateUser = {
   address: string
   profileImg: string
 }
+
+export type ILoginUser = {
+  email: string
+  password: string
+}

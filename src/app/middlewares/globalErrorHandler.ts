@@ -20,7 +20,7 @@ const globalErrorHandler: ErrorRequestHandler = (
   error,
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ) => {
   config.env === 'development' &&
     console.log(`🐱‍🏍 globalErrorHandler ~~`, { error })
