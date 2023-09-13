@@ -1,19 +1,14 @@
-import express from 'express';
-const router = express.Router();
-
-const init = 'name'
+import express from 'express'
+import { UserRoutes } from '../modules/user/user.route'
+const router = express.Router()
 
 const moduleRoutes = [
-  // ... routes
   {
-    path: "/academic-semesters",
-    // route: AcademicSemeterRoutes
-    route: init
+    path: '/auth',
+    route: UserRoutes,
   },
-  
-];
+]
 
-console.log(moduleRoutes);
-// moduleRoutes.forEach(route => router.use(route.path, route.route));
+moduleRoutes.forEach(route => router.use(route.path, route.route))
 
-export default router;
+export default router
