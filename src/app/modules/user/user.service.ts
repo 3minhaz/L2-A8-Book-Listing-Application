@@ -1,3 +1,4 @@
+import { decryptPassword, hashPassword } from './user.utils'
 // import prisma from "../../../shared/prisma"
 
 import { User } from '@prisma/client'
@@ -11,7 +12,10 @@ import config from '../../../config'
 import { Secret } from 'jsonwebtoken'
 
 const createUser = async (data: User): Promise<User> => {
-  const result = await prisma.user.create({ data })
+  const { password, ...others } = data
+  const encryptPassword = await hashPassword(password)
+  const updatedData = { ...others, password: encryptPassword }
+  const result = await prisma.user.create({ data: updatedData })
   return result
 }
 
@@ -24,8 +28,11 @@ const loginUser = async (data: ILoginUser) => {
   if (!isUserExist) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'User does not exist')
   }
-  const notMatchedPassword = isUserExist.password !== data.password
-  if (notMatchedPassword) {
+  const checkPasswordMatched = await decryptPassword({
+    userPassword: data.password,
+    storedPassword: isUserExist.password,
+  })
+  if (!checkPasswordMatched) {
     throw new ApiError(httpStatus.BAD_REQUEST, 'Password is incorrect')
   }
 
