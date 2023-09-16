@@ -13,5 +13,10 @@ router.post(
 
 router.get('/', CategoryController.getAllCategories)
 router.get('/:id', CategoryController.getSingleCategories)
+router.patch(
+  '/:id',
+  auth(ENUM_USER_ROLE.ADMIN),
+  CategoryController.updateCategory
+)
 
 export const CategoryRoutes = router

@@ -36,8 +36,21 @@ const getSingleCategories = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+const updateCategory = catchAsync(async (req: Request, res: Response) => {
+  const id = req.params.id
+  const payload = req.body
+  const result = await CategoryService.updateCategory(id, payload)
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: 'Category updated Successfully',
+    data: result,
+  })
+})
+
 export const CategoryController = {
   createCategory,
   getAllCategories,
   getSingleCategories,
+  updateCategory,
 }
