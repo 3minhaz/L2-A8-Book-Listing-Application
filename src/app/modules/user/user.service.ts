@@ -1,53 +1,76 @@
-import { decryptPassword, hashPassword } from './user.utils'
-// import prisma from "../../../shared/prisma"
-
-import { User } from '@prisma/client'
-// import { ICreateUser } from './user.interface'
+import { Prisma } from '@prisma/client'
+import { IPaginationOptions } from '../../../interfaces/pagination'
 import prisma from '../../../shared/prisma'
-import { ILoginUser } from './user.interface'
-import ApiError from '../../../errors/ApiError'
-import httpStatus from 'http-status'
-import { jwtHelpers } from '../../../helpers/jwtHelpers'
-import config from '../../../config'
-import { Secret } from 'jsonwebtoken'
+import { userSearchableFields } from './user.constants'
+import { IUserFilterRequest } from './user.interface'
+import { paginationHelpers } from '../../../helpers/paginationHelper'
 
-const createUser = async (data: User): Promise<User> => {
-  const { password, ...others } = data
-  const encryptPassword = await hashPassword(password)
-  const updatedData = { ...others, password: encryptPassword }
-  const result = await prisma.user.create({ data: updatedData })
+const getAllUser = async (
+  filters: IUserFilterRequest,
+  options: IPaginationOptions
+) => {
+  const { limit, page, skip } = paginationHelpers.calculatePagination(options)
+  const { searchTerm, ...filterData } = filters
+
+  const andConditions = []
+
+  if (searchTerm) {
+    andConditions.push({
+      OR: userSearchableFields.map(field => ({
+        [field]: {
+          contains: searchTerm,
+          mode: 'insensitive',
+        },
+      })),
+    })
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filterData).map(key => {
+        return {
+          [key]: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            equals: (filterData as any)[key],
+          },
+        }
+      }),
+    })
+  }
+
+  const whereConditions: Prisma.UserWhereInput =
+    andConditions.length > 0 ? { AND: andConditions } : {}
+  const result = await prisma.user.findMany({
+    where: whereConditions,
+    skip,
+    take: limit,
+    orderBy:
+      options.sortBy && options.sortOrder
+        ? { [options.sortBy]: options.sortOrder }
+        : {
+            createdAt: 'desc',
+          },
+  })
+
+  const total = await prisma.user.count({ where: whereConditions })
+  return {
+    meta: {
+      total,
+      page,
+      limit,
+    },
+    data: result,
+  }
+}
+
+const getSingleUser = async (id: string) => {
+  const result = await prisma.user.findFirst({
+    where: {
+      id,
+    },
+  })
+
   return result
 }
 
-const loginUser = async (data: ILoginUser) => {
-  const isUserExist = await prisma.user.findUnique({
-    where: {
-      email: data.email,
-    },
-  })
-  if (!isUserExist) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'User does not exist')
-  }
-  const checkPasswordMatched = await decryptPassword({
-    userPassword: data.password,
-    storedPassword: isUserExist.password,
-  })
-  if (!checkPasswordMatched) {
-    throw new ApiError(httpStatus.BAD_REQUEST, 'Password is incorrect')
-  }
-
-  const { id: userId, role } = isUserExist
-  const accessToken = jwtHelpers.createToken(
-    { userId, role },
-    config.jwt.secret as Secret,
-    config.jwt.expires_in as string
-  )
-  const refreshToken = jwtHelpers.createToken(
-    { userId, role },
-    config.jwt.refresh_secret as Secret,
-    config.jwt.refresh_expires_in as string
-  )
-  return { accessToken, refreshToken }
-}
-
-export const UserService = { createUser, loginUser }
+export const UserService = { getAllUser, getSingleUser }

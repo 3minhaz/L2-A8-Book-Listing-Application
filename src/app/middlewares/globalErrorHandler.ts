@@ -6,7 +6,6 @@ import config from '../../config'
 import ApiError from '../../errors/ApiError'
 import handleValidationError from '../../errors/handleValidationError'
 
-import { Prisma } from '@prisma/client'
 import { ZodError } from 'zod'
 import handleClientError from '../../errors/handleClientError'
 import handleZodError from '../../errors/handleZodError'
