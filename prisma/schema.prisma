@@ -26,6 +26,26 @@ model User {
   @@map("users")
 }
 
+model Category {
+  id String @id @default(uuid())
+  title String
+  books Book[]
+  @@map("categories")
+}
+
+model Book {
+  id String @id @default(uuid())
+  title String
+  author String
+  genre String
+  price Int
+  publicationDate String
+  categoryId String
+  category Category @relation(fields: [categoryId],references: [id])
+}
+
+
+
 enum UserRole {
   admin
   customer
