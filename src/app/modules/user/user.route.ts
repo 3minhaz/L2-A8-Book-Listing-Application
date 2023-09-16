@@ -12,6 +12,11 @@ router.get(
 )
 
 router.get('/:id', auth(ENUM_USER_ROLE.ADMIN), UserController.getSingleUser)
+router.patch(
+  '/:id',
+  auth(ENUM_USER_ROLE.ADMIN),
+  UserController.updateSingleUser
+)
 // router.post('/signin', UserController.loginUser)
 
 export const UserRoutes = router

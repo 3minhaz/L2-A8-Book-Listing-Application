@@ -30,6 +30,20 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+export const updateSingleUser = catchAsync(
+  async (req: Request, res: Response) => {
+    const id = req.params.id
+    const payload = req.body
+    const result = await UserService.updateSingleUser(id, payload)
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'Updated user successfully',
+      data: result,
+    })
+  }
+)
+
 // const loginUser = catchAsync(async (req: Request, res: Response) => {
 //   const data = req.body
 //   const result = await UserService.loginUser(data)
@@ -50,4 +64,4 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
 //     data: others,
 //   })
 // })
-export const UserController = { getAllUser, getSingleUser }
+export const UserController = { getAllUser, getSingleUser, updateSingleUser }

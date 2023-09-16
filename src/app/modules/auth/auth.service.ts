@@ -7,12 +7,16 @@ import { jwtHelpers } from '../../../helpers/jwtHelpers'
 import config from '../../../config'
 import { Secret } from 'jsonwebtoken'
 import { decryptPassword, hashPassword } from './auth.utils'
+import { userReturnFields } from '../user/user.constants'
 
-const createUser = async (data: User): Promise<User> => {
+const createUser = async (data: User): Promise<Partial<User>> => {
   const { password, ...others } = data
   const encryptPassword = await hashPassword(password)
   const updatedData = { ...others, password: encryptPassword }
-  const result = await prisma.user.create({ data: updatedData })
+  const result = await prisma.user.create({
+    data: updatedData,
+    select: userReturnFields,
+  })
   return result
 }
 

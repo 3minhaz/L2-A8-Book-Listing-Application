@@ -1,7 +1,7 @@
-import { Prisma } from '@prisma/client'
+import { Prisma, User } from '@prisma/client'
 import { IPaginationOptions } from '../../../interfaces/pagination'
 import prisma from '../../../shared/prisma'
-import { userSearchableFields } from './user.constants'
+import { userReturnFields, userSearchableFields } from './user.constants'
 import { IUserFilterRequest } from './user.interface'
 import { paginationHelpers } from '../../../helpers/paginationHelper'
 
@@ -50,6 +50,7 @@ const getAllUser = async (
         : {
             createdAt: 'desc',
           },
+    select: userReturnFields,
   })
 
   const total = await prisma.user.count({ where: whereConditions })
@@ -68,9 +69,25 @@ const getSingleUser = async (id: string) => {
     where: {
       id,
     },
+    select: userReturnFields,
   })
-
   return result
 }
 
-export const UserService = { getAllUser, getSingleUser }
+const updateSingleUser = async (id: string, payload: Partial<User>) => {
+  const findEmail = await prisma.user.findFirst({
+    where: { id },
+    select: { email: true },
+  })
+
+  const result = await prisma.user.update({
+    where: {
+      email: findEmail?.email,
+    },
+    data: payload,
+    select: userReturnFields,
+  })
+  return result
+}
+
+export const UserService = { getAllUser, getSingleUser, updateSingleUser }
