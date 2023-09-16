@@ -22,9 +22,6 @@ const getSingleCategories = async (id: string) => {
     where: {
       id,
     },
-    include: {
-      books: true,
-    },
   })
   return result
 }
@@ -39,9 +36,17 @@ const updateCategory = async (id: string, payload: Partial<Category>) => {
   return result
 }
 
+const deleteCategory = async (id: string) => {
+  const result = await prisma.category.delete({
+    where: { id },
+  })
+  return result
+}
+
 export const CategoryService = {
   createCategory,
   getAllCategories,
   getSingleCategories,
   updateCategory,
+  deleteCategory,
 }
