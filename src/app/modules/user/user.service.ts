@@ -90,4 +90,20 @@ const updateSingleUser = async (id: string, payload: Partial<User>) => {
   return result
 }
 
-export const UserService = { getAllUser, getSingleUser, updateSingleUser }
+const deleteUser = async (id: string) => {
+  const findEmail = await prisma.user.findFirst({
+    where: { id },
+    select: { email: true },
+  })
+  const result = await prisma.user.delete({
+    where: { email: findEmail?.email },
+  })
+  return result
+}
+
+export const UserService = {
+  getAllUser,
+  getSingleUser,
+  updateSingleUser,
+  deleteUser,
+}

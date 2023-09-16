@@ -17,6 +17,8 @@ router.patch(
   auth(ENUM_USER_ROLE.ADMIN),
   UserController.updateSingleUser
 )
+
+router.delete('/:id', auth(ENUM_USER_ROLE.ADMIN), UserController.deleteUser)
 // router.post('/signin', UserController.loginUser)
 
 export const UserRoutes = router
