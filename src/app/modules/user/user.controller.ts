@@ -55,26 +55,6 @@ export const deleteUser = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
-// const loginUser = catchAsync(async (req: Request, res: Response) => {
-//   const data = req.body
-//   const result = await UserService.loginUser(data)
-//   const { refreshToken, ...others } = result
-
-//   // set refresh token into cookie
-//   const cookieOptions = {
-//     secure: config.env === 'production',
-//     httpOnly: true,
-//   }
-
-//   res.cookie('refreshToken', refreshToken, cookieOptions)
-
-//   sendResponse(res, {
-//     success: true,
-//     statusCode: httpStatus.OK,
-//     message: 'User Logged in successfully',
-//     data: others,
-//   })
-// })
 export const UserController = {
   getAllUser,
   getSingleUser,
