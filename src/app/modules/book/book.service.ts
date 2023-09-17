@@ -3,7 +3,7 @@ import { bookSearchableFields } from './book.constant'
 import { Book, Prisma } from '@prisma/client'
 import prisma from '../../../shared/prisma'
 import { IPaginationOptions } from '../../../interfaces/pagination'
-import { IBookFilterableFields } from './book.interface'
+import { IBookFieldsUpdate, IBookFilterableFields } from './book.interface'
 import { paginationHelpers } from '../../../helpers/paginationHelper'
 
 const createBook = async (data: Book): Promise<Book> => {
@@ -166,9 +166,20 @@ const getBooksByCategoryId = async (
   }
 }
 
+const updateBook = async (id: string, payload: Partial<IBookFieldsUpdate>) => {
+  const result = await prisma.book.update({
+    where: {
+      id,
+    },
+    data: payload,
+  })
+  return result
+}
+
 export const BookService = {
   createBook,
   getAllBooks,
   getSingleBook,
   getBooksByCategoryId,
+  updateBook,
 }
