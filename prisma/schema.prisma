@@ -30,6 +30,7 @@ model Category {
   id String @id @default(uuid())
   title String
   books Book[]
+
   @@map("categories")
 }
 
@@ -44,11 +45,40 @@ model Book {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   category Category @relation(fields: [categoryId],references: [id])
+  orderBook OrderedBook[]
+
+  @@map("books")
 }
 
+model Order {
+  id String @id @default(uuid())
+  userId String
+  status Status @default(pending)
+  createdAt DateTime @default(now())
+  orderBooks OrderedBook[]
+
+  @@map("orders")
+}
+model OrderedBook {
+  id String @id @default(uuid())
+  orderId String
+  bookId String
+  quantity Int
+  order Order @relation(fields: [orderId],references: [id])
+  book Book @relation(fields: [bookId],references: [id])
+  
+  @@map("orderedBooks")
+}
 
 
 enum UserRole {
   admin
   customer
+}
+
+
+enum Status {
+  pending
+  shipped
+  delivered
 }
