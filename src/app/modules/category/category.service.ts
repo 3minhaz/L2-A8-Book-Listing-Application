@@ -1,20 +1,20 @@
-import { BookCategory } from '@prisma/client'
+import { Category } from '@prisma/client'
 import prisma from '../../../shared/prisma'
 
-const createCategory = async (data: BookCategory): Promise<BookCategory> => {
-  const result = await prisma.bookCategory.create({
+const createCategory = async (data: Category): Promise<Category> => {
+  const result = await prisma.category.create({
     data,
   })
   return result
 }
 
 const getAllCategories = async () => {
-  const result = await prisma.bookCategory.findMany({})
+  const result = await prisma.category.findMany({})
   return result
 }
 
 const getSingleCategories = async (id: string) => {
-  const result = await prisma.bookCategory.findUnique({
+  const result = await prisma.category.findUnique({
     where: {
       id,
     },
@@ -25,8 +25,8 @@ const getSingleCategories = async (id: string) => {
   return result
 }
 
-const updateCategory = async (id: string, payload: Partial<BookCategory>) => {
-  const result = await prisma.bookCategory.update({
+const updateCategory = async (id: string, payload: Partial<Category>) => {
+  const result = await prisma.category.update({
     where: {
       id,
     },
@@ -36,7 +36,7 @@ const updateCategory = async (id: string, payload: Partial<BookCategory>) => {
 }
 
 const deleteCategory = async (id: string) => {
-  const result = await prisma.bookCategory.delete({
+  const result = await prisma.category.delete({
     where: { id },
   })
   return result
