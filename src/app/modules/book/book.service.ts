@@ -176,10 +176,16 @@ const updateBook = async (id: string, payload: Partial<IBookFieldsUpdate>) => {
   return result
 }
 
+const deleteBook = async (id: string) => {
+  const result = await prisma.book.delete({ where: { id } })
+  return result
+}
+
 export const BookService = {
   createBook,
   getAllBooks,
   getSingleBook,
   getBooksByCategoryId,
   updateBook,
+  deleteBook,
 }
