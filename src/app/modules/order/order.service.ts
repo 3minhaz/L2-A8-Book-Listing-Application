@@ -63,7 +63,7 @@ const getAllOrder = async (role: string, userId: string) => {
 const getSingleOrder = async (role: string, id: string, params: string) => {
   if (role === 'admin') {
     return prisma.order.findUnique({
-      where: { id },
+      where: { id: params },
       include: {
         orderBooks: {
           select: {
