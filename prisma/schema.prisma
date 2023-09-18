@@ -20,6 +20,7 @@ model User {
   contactNo String
   address String
   profileImg String
+  reviews ReviewAndRating[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -46,10 +47,19 @@ model Book {
   updatedAt DateTime @updatedAt
   category Category @relation(fields: [categoryId],references: [id])
   orderBook OrderedBook[]
-
+  reviews ReviewAndRating[]
   @@map("books")
 }
 
+model ReviewAndRating {
+  id String @id @default(uuid())
+  review String
+  rating Int
+  userId String
+  user User @relation(fields: [userId],references: [id])
+  bookId String
+  book Book @relation(fields: [bookId],references: [id])
+}
 model Order {
   id String @id @default(uuid())
   userId String
